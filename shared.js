@@ -67,8 +67,10 @@ const _FOOTER = `
     <div class="footer-grid">
       <div class="footer-brand">
         <div class="footer-logo">
-          <img src="assets/images/logo.png" alt="Hello Corp" class="footer-logo-img"/>
+          <img src="assets/icon.svg" alt="" class="footer-icon"/>
+          <span class="footer-brand-name"><span class="logo-add">Hello</span><span style="color:#fff"> Corp</span></span>
         </div>
+        <p class="footer-slogan">La voix de votre entreprise</p>
         <p>La 1ère entreprise de Travail à Temps Choisi en France. Votre partenaire externalisé, à la carte.</p>
         <div class="footer-social">
           <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>

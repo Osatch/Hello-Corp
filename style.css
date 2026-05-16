@@ -883,8 +883,10 @@ img { display: block; max-width: 100%; height: auto; }
   letter-spacing: -0.03em;
   margin-bottom: 14px;
 }
-.footer-logo-img { height: 110px; width: auto; margin-bottom: 10px; }
-.footer-slogan { font-size: 1rem; font-weight: 600; color: #7dd3fc; margin-bottom: 6px; font-style: italic; }
+.footer-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.footer-icon { height: 52px; width: 52px; border-radius: 50%; flex-shrink: 0; }
+.footer-brand-name { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
+.footer-slogan { font-size: 0.9rem; font-weight: 500; color: #7dd3fc; margin-bottom: 10px; font-style: italic; }
 .footer .logo-add  { color: #5BA4E0; }
 .footer .logo-ecom { color: var(--white); }
 
