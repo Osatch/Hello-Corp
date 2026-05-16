@@ -202,6 +202,11 @@ img { display: block; max-width: 100%; height: auto; }
   letter-spacing: -0.03em;
   flex-shrink: 0;
 }
+.logo-with-img { display: flex; align-items: center; gap: 10px; }
+.logo-img { height: 48px; width: auto; border-radius: 50%; }
+.logo-text { display: flex; flex-direction: column; line-height: 1.1; }
+.logo-name { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em; }
+.logo-slogan { font-size: 0.6rem; color: var(--gray-500); letter-spacing: 0.04em; font-weight: 400; font-style: italic; }
 .logo-add  { color: var(--blue); }
 .logo-ecom { color: var(--gray-900); }
 
@@ -352,6 +357,22 @@ img { display: block; max-width: 100%; height: auto; }
   z-index: 1;
   padding: 80px 24px;
   max-width: 680px;
+}
+.hero-logo {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 0 24px rgba(96,184,224,0.45));
+}
+.hero-tagline {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #93d4f7;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  font-style: italic;
 }
 
 .hero-content h1 {
@@ -863,6 +884,8 @@ img { display: block; max-width: 100%; height: auto; }
   letter-spacing: -0.03em;
   margin-bottom: 14px;
 }
+.footer-logo-img { height: 90px; width: auto; border-radius: 50%; margin-bottom: 10px; }
+.footer-slogan { font-size: 1rem; font-weight: 600; color: #7dd3fc; margin-bottom: 6px; font-style: italic; }
 .footer .logo-add  { color: #5BA4E0; }
 .footer .logo-ecom { color: var(--white); }
 
