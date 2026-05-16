@@ -14,7 +14,11 @@ const _NAV = `
   <nav class="navbar" id="navbar">
     <div class="container nav-inner">
       <a href="index.html" class="logo logo-with-img">
-        <img src="assets/images/logo-claire.png" alt="Hello Corp" class="logo-img"/>
+        <img src="assets/icon.svg" alt="Hello Corp" class="logo-img"/>
+        <span class="logo-text">
+          <span class="logo-name"><span class="logo-add">Hello</span><span class="logo-ecom"> Corp</span></span>
+          <span class="logo-slogan">La voix de votre entreprise</span>
+        </span>
       </a>
       <ul class="nav-links" id="navLinks">
         <li><a href="actualites.html">Actualités</a></li>
