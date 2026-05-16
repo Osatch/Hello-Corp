@@ -14,11 +14,7 @@ const _NAV = `
   <nav class="navbar" id="navbar">
     <div class="container nav-inner">
       <a href="index.html" class="logo logo-with-img">
-        <img src="assets/logo.svg" alt="Hello Corp" class="logo-img"/>
-        <span class="logo-text">
-          <span class="logo-name"><span class="logo-add">Hello</span><span class="logo-ecom"> Corp</span></span>
-          <span class="logo-slogan">La voix de votre entreprise</span>
-        </span>
+        <img src="assets/images/logo-claire.png" alt="Hello Corp" class="logo-img"/>
       </a>
       <ul class="nav-links" id="navLinks">
         <li><a href="actualites.html">Actualités</a></li>
@@ -67,9 +63,8 @@ const _FOOTER = `
     <div class="footer-grid">
       <div class="footer-brand">
         <div class="footer-logo">
-          <img src="assets/logo.svg" alt="Hello Corp" class="footer-logo-img"/>
+          <img src="assets/images/logo.png" alt="Hello Corp" class="footer-logo-img"/>
         </div>
-        <p class="footer-slogan">La voix de votre entreprise</p>
         <p>La 1ère entreprise de Travail à Temps Choisi en France. Votre partenaire externalisé, à la carte.</p>
         <div class="footer-social">
           <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
