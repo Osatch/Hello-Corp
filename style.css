@@ -234,9 +234,14 @@ img { display: block; max-width: 100%; height: auto; }
   background: var(--blue-bg);
 }
 
-.caret { font-size: 0.65rem; opacity: 0.6; }
+.caret {
+  font-size: 0.65rem;
+  opacity: 0.6;
+  display: inline-block;
+  transition: transform var(--transition);
+}
 
-/* Dropdown */
+/* Dropdown — contrôlé par JS (.open) */
 .dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -250,19 +255,26 @@ img { display: block; max-width: 100%; height: auto; }
   opacity: 0;
   visibility: hidden;
   transform: translateY(8px);
-  transition: all var(--transition);
-  z-index: 100;
+  transition: opacity var(--transition), transform var(--transition), visibility var(--transition);
+  z-index: 200;
+  pointer-events: none;
 }
 
-.has-dropdown:hover .dropdown {
+.has-dropdown.open .dropdown {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+  pointer-events: all;
+}
+
+.has-dropdown.open > a {
+  color: var(--blue);
+  background: var(--blue-bg);
 }
 
 .dropdown li a {
   display: block;
-  padding: 9px 20px;
+  padding: 10px 20px;
   font-size: 0.83rem;
   font-weight: 500;
   color: var(--gray-600);
@@ -972,9 +984,32 @@ img { display: block; max-width: 100%; height: auto; }
   .nav-links > li { width: 100%; }
   .nav-links > li > a { border-radius: 0; padding: 12px 24px; font-size: 0.9rem; }
   .nav-cta { border-radius: 0 !important; margin-left: 0 !important; width: 100%; }
-  .dropdown { position: static; opacity: 1; visibility: visible; transform: none; box-shadow: none; border: none; border-radius: 0; padding: 0; display: none; }
-  .has-dropdown:hover .dropdown { display: block; }
-  .dropdown li a { padding: 10px 24px 10px 40px; font-size: 0.82rem; }
+  /* Dropdown mobile — accordion */
+  .dropdown {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    box-shadow: none;
+    border: none;
+    border-top: 1px solid var(--gray-100);
+    border-radius: 0;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-height 0.3s ease;
+  }
+  .has-dropdown.open .dropdown {
+    max-height: 400px;
+    pointer-events: all;
+  }
+  .dropdown li a {
+    padding: 10px 24px 10px 44px;
+    font-size: 0.85rem;
+    background: var(--gray-50);
+  }
+  .dropdown li a:hover { background: var(--blue-bg); }
   .hamburger { display: flex; }
   .navbar { position: relative; }
 
