@@ -374,6 +374,38 @@ img { display: block; max-width: 100%; height: auto; }
   font-style: italic;
 }
 
+.hero-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 6px 16px;
+  border-radius: 50px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(6px);
+}
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.btn-outline-white {
+  background: transparent;
+  border: 2px solid rgba(255,255,255,0.7);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: background 0.2s, border-color 0.2s;
+  text-decoration: none;
+}
+.btn-outline-white:hover { background: rgba(255,255,255,0.12); border-color: #fff; }
+
 .hero-content h1 {
   font-size: clamp(2rem, 5vw, 3.2rem);
   font-weight: 800;
@@ -515,6 +547,15 @@ img { display: block; max-width: 100%; height: auto; }
 .stats-section {
   background: var(--blue);
   padding: 72px 0;
+}
+.stats-headline {
+  text-align: center;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 40px;
 }
 
 .stats-grid {
@@ -704,6 +745,51 @@ img { display: block; max-width: 100%; height: auto; }
   color: var(--gray-500);
   line-height: 1.65;
   margin-bottom: 16px;
+}
+
+/* ============================================================
+   POURQUOI HELLO CORP
+   ============================================================ */
+.why-section { background: var(--gray-50, #f8fafc); padding: 88px 0; }
+.why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 48px; }
+.why-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 40px 32px;
+  text-align: center;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.why-card:hover { transform: translateY(-6px); box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+.why-icon { font-size: 2.8rem; margin-bottom: 18px; }
+.why-card h3 { font-size: 1.15rem; font-weight: 700; color: var(--gray-900); margin-bottom: 12px; }
+.why-card p { font-size: 0.9rem; color: var(--gray-500); line-height: 1.7; }
+
+/* ============================================================
+   CITATION
+   ============================================================ */
+.quote-section {
+  background: var(--gray-900, #0f172a);
+  padding: 72px 0;
+}
+.site-quote {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+.site-quote p {
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  font-weight: 500;
+  color: var(--white);
+  line-height: 1.7;
+  font-style: italic;
+  margin-bottom: 20px;
+}
+.site-quote cite {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.5);
+  font-style: normal;
+  font-weight: 500;
 }
 
 /* ============================================================
