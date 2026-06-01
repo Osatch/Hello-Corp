@@ -30,7 +30,6 @@ const _NAV = `
             <li><a href="prospection-b2b.html#prospection">Prospection téléphonique</a></li>
             <li><a href="prospection-b2b.html#etude">Étude de satisfaction</a></li>
             <li><a href="prospection-b2b.html#developper-ca">Développer votre CA</a></li>
-            <li><a href="prospection-b2b.html#cse">CSE</a></li>
           </ul>
         </li>
         <li class="has-dropdown">
@@ -45,10 +44,9 @@ const _NAV = `
           <ul class="dropdown">
             <li><a href="fonctions-support.html#administration">Administration / Gestion</a></li>
             <li><a href="fonctions-support.html#secretariat">Secrétariat</a></li>
-            <li><a href="fonctions-support.html#rh-paie">RH / Paie</a></li>
             <li><a href="fonctions-support.html#commercial">Commercial</a></li>
             <li><a href="fonctions-support.html#communication">Communication / Marketing</a></li>
-            <li><a href="fonctions-support.html#informatique">Informatique</a></li>
+            <li><a href="fonctions-support.html#utilisateurs">Support Utilisateurs</a></li>
           </ul>
         </li>
         <li><a href="index.html#approche">Notre approche</a></li>
@@ -99,7 +97,7 @@ const _FOOTER = `
         <ul>
           <li><a href="tel:+33652916643">+33 6 52 91 66 43</a></li>
           <li><span>Lun – Ven : 8h – 19h</span></li>
-          <li><span>Angers, France</span></li>
+          <li><span>Paris, France</span></li>
         </ul>
         <a href="index.html#contact" class="btn btn-primary footer-btn">Nous contacter</a>
       </div>

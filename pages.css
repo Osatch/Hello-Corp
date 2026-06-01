@@ -200,6 +200,12 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 28px;
 }
+.news-page .news-card { scroll-margin-top: 112px; }
+.news-page .news-card:target {
+  border-color: var(--blue);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+}
 
 /* Responsive */
 @media (max-width: 900px) {
