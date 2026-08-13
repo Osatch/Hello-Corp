@@ -27,51 +27,45 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ──────────────────────────────────────────────────────────────────────
      Formulaire de contact
 
-     Deux modes possibles, selon l'hébergement final :
+     Le mode d'envoi est choisi automatiquement selon l'hébergement :
 
-     1) HÉBERGEMENT PHP (LWS, OVH, o2switch, Hostinger…)  ← réglage par défaut
-        Laisser `web3formsKey` vide : le formulaire est traité par contact.php.
+     • Hébergement PHP (LWS, OVH, o2switch…)  → contact.php
+     • Hébergement statique (GitHub Pages, Netlify, Vercel…) → FormSubmit,
+       car le PHP n'y est pas exécuté. Aucun compte ni clé à créer : le
+       service envoie un email de confirmation à l'adresse de réception lors
+       du tout premier envoi, il suffit de cliquer sur le lien une fois.
 
-     2) HÉBERGEMENT STATIQUE (GitHub Pages, Netlify, Vercel…)
-        Le PHP n'y est pas exécuté. Créer une clé gratuite sur
-        https://web3forms.com (saisir l'email de réception, la clé arrive par
-        mail) puis la coller ci-dessous. Rien d'autre à changer.
+     Pour forcer un mode, remplacer `mode: 'auto'` par 'php' ou 'formsubmit'.
      ────────────────────────────────────────────────────────────────────── */
   const CONTACT_CONFIG = {
-    web3formsKey: '',                       // ex. 'a1b2c3d4-....' pour le mode statique
+    mode: 'auto',                                  // 'auto' | 'php' | 'formsubmit'
+    email: 'oussama4448@gmail.com',                // adresse de réception (mode statique)
     subject: 'Nouvelle demande de contact - Site Hello Corp',
   };
 
   const SUCCESS_MESSAGE  = 'Merci ! Votre demande a bien été envoyée, nous revenons vers vous rapidement.';
   const FALLBACK_MESSAGE = "L'envoi n'a pas abouti. Merci de nous écrire à contact@hellocorp.fr ou de nous appeler au 01 87 66 66 57.";
 
+  /** Hébergements statiques connus : le PHP n'y fonctionne pas. */
+  const STATIC_HOSTS = ['github.io', 'netlify.app', 'vercel.app', 'pages.dev'];
+
   const form = document.getElementById('contactForm');
   if (form) {
     const status = document.getElementById('formStatus');
-    const useWeb3Forms = CONTACT_CONFIG.web3formsKey.trim() !== '';
-    const endpoint = useWeb3Forms ? 'https://api.web3forms.com/submit' : form.action;
 
-    // En mode statique, on pointe aussi l'attribut action pour que l'envoi
-    // fonctionne même si le JavaScript est bloqué.
-    if (useWeb3Forms) {
-      form.action = endpoint;
-      let keyInput = form.querySelector('input[name="access_key"]');
-      if (!keyInput) {
-        keyInput = document.createElement('input');
-        keyInput.type = 'hidden';
-        keyInput.name = 'access_key';
-        form.appendChild(keyInput);
-      }
-      keyInput.value = CONTACT_CONFIG.web3formsKey.trim();
+    const isStaticHost = STATIC_HOSTS.some(host => location.hostname.endsWith(host));
+    const mode = CONTACT_CONFIG.mode === 'auto'
+      ? (isStaticHost ? 'formsubmit' : 'php')
+      : CONTACT_CONFIG.mode;
 
-      let subjectInput = form.querySelector('input[name="subject"]');
-      if (!subjectInput) {
-        subjectInput = document.createElement('input');
-        subjectInput.type = 'hidden';
-        subjectInput.name = 'subject';
-        form.appendChild(subjectInput);
-      }
-      subjectInput.value = CONTACT_CONFIG.subject;
+    const endpoint = mode === 'formsubmit'
+      ? 'https://formsubmit.co/ajax/' + encodeURIComponent(CONTACT_CONFIG.email)
+      : form.action;
+
+    // On aligne aussi l'attribut action pour que l'envoi fonctionne même si
+    // le JavaScript est désactivé.
+    if (mode === 'formsubmit') {
+      form.action = 'https://formsubmit.co/' + encodeURIComponent(CONTACT_CONFIG.email);
     }
 
     form.addEventListener('submit', async e => {
@@ -103,9 +97,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         const payload = new FormData(form);
-        if (useWeb3Forms) {
+        if (mode === 'formsubmit') {
           // Champ piège interne : inutile de le transmettre au service externe.
           payload.delete('website');
+          payload.append('_subject', CONTACT_CONFIG.subject);
+          payload.append('_template', 'table');
+          payload.append('_captcha', 'false');
         }
 
         const response = await fetch(endpoint, {
@@ -138,8 +135,10 @@ document.addEventListener('DOMContentLoaded', () => {
           };
         }
 
-        // Web3Forms renvoie { success }, Formspree { ok } : on accepte les deux.
-        const ok = response.ok && (result.success === true || result.ok === true);
+        // contact.php renvoie { success: true }, FormSubmit { success: "true" }
+        // (chaîne de caractères), Formspree { ok: true } : on accepte les trois.
+        const ok = response.ok
+          && (result.success === true || result.success === 'true' || result.ok === true);
         if (!ok) {
           console.error('[contact] Envoi refusé :', response.status, result);
           throw new Error(result.message || FALLBACK_MESSAGE);
@@ -147,7 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         form.reset();
         if (status) {
-          status.textContent = result.message || SUCCESS_MESSAGE;
+          // Les services externes répondent en anglais : on garde notre message.
+          status.textContent = (mode === 'php' && result.message) ? result.message : SUCCESS_MESSAGE;
           status.classList.add('form-status--success');
         }
       } catch (error) {
