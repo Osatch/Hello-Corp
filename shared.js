@@ -93,7 +93,7 @@ const _FOOTER = `
         <h4>Contact</h4>
         <ul>
           <li><a href="tel:+33187666657">01 87 66 66 57</a></li>
-          <li><span>Lun – Ven : 8h – 19h</span></li>
+          <li><span>Lun – Ven : 8h – 18h</span></li>
           <li><span>Paris, France</span></li>
         </ul>
         <a href="index.html#contact" class="btn btn-primary footer-btn">Nous contacter</a>

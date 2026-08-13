@@ -16,7 +16,7 @@ if (is_file(__DIR__ . '/contact-config.local.php')) {
     require __DIR__ . '/contact-config.local.php';
 }
 
-if (!defined('RECIPIENT_EMAILS')) define('RECIPIENT_EMAILS', 'oussama4448@gmail.com');
+if (!defined('RECIPIENT_EMAILS')) define('RECIPIENT_EMAILS', 'contact@hellocorp.fr');
 if (!defined('FROM_EMAIL'))       define('FROM_EMAIL', 'contact@hellocorp.fr');
 if (!defined('FROM_NAME'))        define('FROM_NAME', 'Site Hello Corp');
 

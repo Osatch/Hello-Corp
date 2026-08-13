@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
      ────────────────────────────────────────────────────────────────────── */
   const CONTACT_CONFIG = {
     mode: 'auto',                                  // 'auto' | 'php' | 'formsubmit'
-    email: 'oussama4448@gmail.com',                // adresse de réception (mode statique)
+    email: 'contact@hellocorp.fr',                 // adresse de réception (mode statique)
     subject: 'Nouvelle demande de contact - Site Hello Corp',
   };
 

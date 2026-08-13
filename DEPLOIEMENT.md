@@ -118,11 +118,11 @@ Deux scénarios possibles. **Le choix se résume à une question : l'hébergemen
 Ouvrir [contact.php](contact.php) et vérifier les deux premières constantes :
 
 ```php
-define('RECIPIENT_EMAILS', 'oussama4448@gmail.com');   // qui reçoit les demandes
+define('RECIPIENT_EMAILS', 'contact@hellocorp.fr');    // qui reçoit les demandes
 define('FROM_EMAIL', 'contact@hellocorp.fr');          // expéditeur (doit être du domaine du site)
 ```
 
-- Pour recevoir sur plusieurs adresses : `'contact@hellocorp.fr, oussama4448@gmail.com'`
+- Pour recevoir sur plusieurs adresses, les séparer par une virgule : `'contact@hellocorp.fr, direction@hellocorp.fr'`
 - ⚠️ `FROM_EMAIL` **doit** appartenir au domaine du site, sinon les mails partent en spam ou sont bloqués.
 
 #### A.3 Envoyer les fichiers
