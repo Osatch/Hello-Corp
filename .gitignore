@@ -1,0 +1,22 @@
+# Sauvegarde locale des demandes du formulaire (données personnelles : ne jamais versionner)
+contact-messages.log
+
+# Configuration locale du formulaire (contient des identifiants SMTP)
+contact-config.local.php
+
+# Emails capturés par la boîte mail locale de test
+outils/mails-recus/
+
+# Fichiers de travail
+Modifs Site/
+_tmp_xlsx_images/
+
+# Système
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp

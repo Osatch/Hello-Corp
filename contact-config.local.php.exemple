@@ -1,0 +1,38 @@
+<?php
+/**
+ * Exemple de configuration LOCALE du formulaire de contact.
+ *
+ * UTILISATION :
+ *   1. Copier ce fichier sous le nom  contact-config.local.php
+ *   2. Adapter les valeurs ci-dessous
+ *   3. Relancer le serveur local
+ *
+ * Ce fichier n'est ni versionné (voir .gitignore) ni déployé en production :
+ * il sert uniquement à tester l'envoi d'emails depuis le poste de développement.
+ * Les valeurs définies ici sont prioritaires sur celles de contact.php.
+ */
+
+// ── OPTION 1 : boîte mail locale (aucun compte requis) ───────────────────────
+// Lancer d'abord :  node outils/mailcatcher.js
+// Les emails s'affichent dans le terminal, rien n'est envoyé sur Internet.
+
+define('SMTP_HOST', '127.0.0.1');
+define('SMTP_PORT', 2525);
+define('SMTP_SECURE', 'none');
+define('SMTP_USER', '');
+define('SMTP_PASS', '');
+
+// ── OPTION 2 : envoi réel via Gmail ──────────────────────────────────────────
+// Commenter l'option 1 ci-dessus et décommenter ces lignes.
+// Prérequis : validation en deux étapes activée sur le compte Google, puis
+// créer un « mot de passe d'application » sur https://myaccount.google.com/apppasswords
+//
+// define('SMTP_HOST', 'smtp.gmail.com');
+// define('SMTP_PORT', 587);
+// define('SMTP_SECURE', 'tls');
+// define('SMTP_USER', 'votre.adresse@gmail.com');
+// define('SMTP_PASS', 'xxxx xxxx xxxx xxxx');   // mot de passe d'application
+// define('FROM_EMAIL', 'votre.adresse@gmail.com'); // Gmail impose son propre expéditeur
+
+// ── Adresse de réception pendant les tests ───────────────────────────────────
+// define('RECIPIENT_EMAILS', 'votre.adresse@gmail.com');
