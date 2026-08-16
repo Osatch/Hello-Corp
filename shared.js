@@ -29,6 +29,9 @@ const _NAV = `
             <li><a href="prospection-b2b.html#telemarketing">Télémarketing</a></li>
             <li><a href="prospection-b2b.html#prospection">Prospection téléphonique</a></li>
             <li><a href="prospection-b2b.html#etude">Étude de satisfaction</a></li>
+            <li><a href="prospection-b2b.html#ventes">Ventes</a></li>
+            <li><a href="prospection-b2b.html#win-back">Win-back</a></li>
+            <li><a href="prospection-b2b.html#anti-churn">Anti-churn</a></li>
           </ul>
         </li>
         <li class="has-dropdown">
@@ -69,7 +72,7 @@ const _FOOTER = `
         <p>Votre partenaire externalisé, à la carte.</p>
         <div class="footer-social">
           <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
-          <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://www.linkedin.com/company/hellocorpfrance/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
         </div>
       </div>
       <div class="footer-col">
@@ -104,7 +107,7 @@ const _FOOTER = `
       <div class="footer-legal">
         <a href="mentions-legales.html">Mentions légales</a>
         <a href="politique-confidentialite.html">Politique de confidentialité</a>
-        <a href="politique-cookies.html">Politique de cookies</a>
+        <a href="politique-cookies.html">Politique de gestion des cookies</a>
       </div>
     </div>
   </div>
