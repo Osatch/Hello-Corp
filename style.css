@@ -1496,3 +1496,39 @@ body {
   .hero-content h1 { font-size: 1.9rem; }
   .btn { width: 100%; white-space: normal; }
 }
+
+/* ============================================================
+   PRISE DE RENDEZ-VOUS (TidyCal)
+   ============================================================ */
+.booking-section {
+  background: var(--surface);
+  padding: 80px 0;
+  border-top: 1px solid var(--line);
+}
+
+.booking-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 24px;
+  overflow: hidden;
+}
+
+/* Réserve la hauteur avant le chargement du script pour éviter le saut de mise en page */
+.booking-card .tidycal-embed { min-height: 620px; }
+.booking-card iframe { display: block; width: 100%; border: 0; }
+
+.booking-fallback {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.booking-fallback a { color: var(--blue); font-weight: 600; text-decoration: underline; }
+
+@media (max-width: 768px) {
+  .booking-section { padding: 56px 0; }
+  .booking-card { padding: 12px; }
+  .booking-card .tidycal-embed { min-height: 560px; }
+}
