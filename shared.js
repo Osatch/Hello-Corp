@@ -29,9 +29,6 @@ const _NAV = `
             <li><a href="prospection-b2b.html#telemarketing">Télémarketing</a></li>
             <li><a href="prospection-b2b.html#prospection">Prospection téléphonique</a></li>
             <li><a href="prospection-b2b.html#etude">Étude de satisfaction</a></li>
-            <li><a href="prospection-b2b.html#ventes">Ventes</a></li>
-            <li><a href="prospection-b2b.html#win-back">Win-back</a></li>
-            <li><a href="prospection-b2b.html#anti-churn">Anti-churn</a></li>
           </ul>
         </li>
         <li class="has-dropdown">
