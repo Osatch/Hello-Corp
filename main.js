@@ -25,6 +25,49 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
   /* ──────────────────────────────────────────────────────────────────────
+     Widget flottant de prise de rendez-vous (TidyCal)
+
+     Le calendrier est initialisé au premier clic seulement, pour ne pas
+     charger une seconde iframe TidyCal au chargement de la page (celle de
+     la section « Prise de rendez-vous » est déjà chargée par embed.js).
+     ────────────────────────────────────────────────────────────────────── */
+  const bookingWidget = document.getElementById('bookingWidget');
+
+  if (bookingWidget) {
+    const btn   = document.getElementById('bookingWidgetBtn');
+    const panel = document.getElementById('bookingWidgetPanel');
+    const close = document.getElementById('bookingWidgetClose');
+    const embed = document.getElementById('bookingWidgetEmbed');
+    let loaded  = false;
+
+    // embed.js est chargé en `async` : il peut ne pas être prêt au clic.
+    const initCalendar = (tries = 0) => {
+      if (loaded || !embed) return;
+      if (window.TidyCal) {
+        loaded = true;
+        window.TidyCal.init(embed);   // remplace la div par l'iframe TidyCal
+      } else if (tries < 40) {
+        setTimeout(() => initCalendar(tries + 1), 150);
+      } else {
+        embed.innerHTML = '<p class="booking-widget-loading">Calendrier indisponible pour le moment.</p>';
+      }
+    };
+
+    const setOpen = open => {
+      panel.hidden = !open;
+      bookingWidget.classList.toggle('is-open', open);
+      btn.setAttribute('aria-expanded', String(open));
+      if (open) initCalendar();
+    };
+
+    btn.addEventListener('click', () => setOpen(panel.hidden));
+    close.addEventListener('click', () => { setOpen(false); btn.focus(); });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !panel.hidden) { setOpen(false); btn.focus(); }
+    });
+  }
+
+  /* ──────────────────────────────────────────────────────────────────────
      Formulaire de contact
 
      Le mode d'envoi est choisi automatiquement selon l'hébergement :
