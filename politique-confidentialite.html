@@ -11,6 +11,8 @@
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="pages.css" />
+  <!-- Mesure d'audience Matomo (configuration dans matomo.js) -->
+  <script src="matomo.js"></script>
 </head>
 <body>
   <div id="nav-root"></div>
@@ -87,9 +89,8 @@
           </ul>
           <p>La mesure d'audience réalisée au moyen de Matomo est configurée afin de respecter les conditions permettant l'exemption de consentement applicable à certains traceurs de mesure d'audience. Cette exemption ne dispense pas du respect des obligations applicables au traitement des données personnelles au titre du RGPD.</p>
           <p>Vous pouvez vous opposer à la mesure d'audience réalisée à l'aide de Matomo en utilisant le mécanisme d'opposition ci-dessous.</p>
-          <!-- TODO Matomo : remplacer ce bloc par l'iframe d'opt-out fournie par l'instance Matomo, par exemple :
-               <iframe class="matomo-optout" style="border:0;width:100%;height:200px" src="https://VOTRE-INSTANCE-MATOMO/index.php?module=CoreAdminHome&action=optOut&language=fr"></iframe> -->
-          <p><em>[Mécanisme d'opt-out Matomo à insérer ici]</em></p>
+          <!-- L'iframe d'opposition est insérée par matomo.js à partir de l'URL configurée dans ce fichier. -->
+          <div id="matomo-optout"></div>
           <h2>8. Destinataires des données</h2>
           <p>Les données sont accessibles uniquement :</p>
           <ul class="article-list">

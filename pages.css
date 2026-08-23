@@ -517,6 +517,12 @@
   color: var(--gray-600);
   line-height: 1.75;
 }
+.about-panel p + p { margin-top: 14px; }
+.about-copy p strong,
+.about-panel p strong {
+  color: var(--gray-900);
+  font-weight: 700;
+}
 .about-service-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

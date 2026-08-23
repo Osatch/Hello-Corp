@@ -57,7 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
       panel.hidden = !open;
       bookingWidget.classList.toggle('is-open', open);
       btn.setAttribute('aria-expanded', String(open));
-      if (open) initCalendar();
+      if (open) {
+        initCalendar();
+        // Signal repris par matomo.js pour la mesure d'audience.
+        document.dispatchEvent(new CustomEvent('hc:rdv-ouvert', { detail: { source: 'widget flottant' } }));
+      }
     };
 
     btn.addEventListener('click', () => setOpen(panel.hidden));
@@ -188,6 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         form.reset();
+        // Signal repris par matomo.js pour la mesure d'audience.
+        document.dispatchEvent(new CustomEvent('hc:contact-envoye'));
         if (status) {
           // Les services externes répondent en anglais : on garde notre message.
           status.textContent = (mode === 'php' && result.message) ? result.message : SUCCESS_MESSAGE;
