@@ -29,6 +29,7 @@
   --dur-lg:    620ms;
   --dur-zoom:  900ms;   /* zoom d'image : lent = perçu comme premium */
   --dur-sweep: 950ms;   /* bandeau lumineux                          */
+  --dur-fade:  560ms;   /* fondu d'apparition d'une image chargée     */
 
   /* Amplitude du zoom au survol */
   --media-zoom: 1.07;
@@ -186,6 +187,27 @@ textarea:focus-visible,
   transition: opacity var(--dur-zoom) var(--ease-out);
 }
 .dual-card:hover .dual-card-img-overlay { opacity: 1; }
+
+/* ── Fondu à l'arrivée des pixels ───────────────────────────
+   Une image se peint d'un coup, à la milliseconde où le
+   réseau la termine : c'est la seule apparition brutale qui
+   reste sur le site. La classe `.hc-img` la masque, la classe
+   `.is-loaded` la révèle en fondu.
+
+   Deux garde-fous portés par motion.js :
+   • sans JavaScript, aucune image n'est masquée — la règle ne
+     s'applique qu'aux éléments qui ont reçu la classe ;
+   • une image déjà peinte (cache, préchargement) n'est jamais
+     masquée après coup, ce qui produirait un clignotement.
+
+   Le conteneur conserve son aplat gris : le fondu part d'un
+   cadre plein, pas d'un trou blanc. Seule `opacity` varie, la
+   géométrie de la page ne bouge donc jamais. */
+.hc-img {
+  opacity: 0;
+  transition: opacity var(--dur-fade) var(--ease-out);
+}
+.hc-img.is-loaded { opacity: 1; }
 
 /* ============================================================
    3. CARTES — élévation et filet d'accent
@@ -718,6 +740,11 @@ section[id]    { scroll-margin-top: 108px; }
   .service-detail-img:hover img,
   .about-img:hover img,
   .article-hero-img:hover img { transform: none; }
+
+  /* Un fondu ne déplace rien, mais la règle du site est de ne
+     retenir aucune apparition progressive dans ce mode : les
+     images s'affichent dès qu'elles sont disponibles. */
+  .hc-img { opacity: 1; transition: none; }
 }
 
 /* ============================================================
@@ -972,22 +999,6 @@ section[id]    { scroll-margin-top: 108px; }
 .news-card:hover .news-card-body h3,
 .news-card:hover .news-card-body h3 a { color: var(--blue); }
 
-/* ── Volet de dévoilement des visuels (droite → gauche) ────── */
-
-/* Un aplat couvre l'image puis se retire vers la gauche : même
-   sens de lecture que le bandeau lumineux du survol. */
-.hc-wipe::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  background: var(--blue-dark);
-  transform: translate3d(0, 0, 0);
-  transition: transform 900ms var(--ease-expo) var(--wd, 0ms);
-  pointer-events: none;
-}
-.hc-wipe.in::before { transform: translate3d(-101%, 0, 0); }
-
 /* ── Titre du hero : entrée mot à mot ──────────────────────── */
 
 @keyframes hc-word {
@@ -1023,7 +1034,6 @@ section[id]    { scroll-margin-top: 108px; }
   .page-cta .btn-primary::after,
   .section-tag::before,
   .service-detail-tag::before { animation: none !important; }
-  .hc-wipe::before { display: none; }
   .hero-content h1.is-split .w { animation: none; opacity: 1; transform: none; }
   .section-header h2::after { transform: scaleX(1); }
   /* Les survols de couleur restent : seuls les déplacements tombent. */

@@ -27,7 +27,7 @@
     initSplitTitle();
     initMarquee();
     initReveal();
-    initWipe();
+    initImageFade();
     initScrollSpy();
     initHeaderState();
     initHeroParallax();
@@ -385,45 +385,54 @@
   }
 
   /* ──────────────────────────────────────────────────────────
-     Volet de dévoilement des visuels
-     Un aplat couvre l'image et se retire vers la gauche quand
-     le bloc entre dans le champ.
+     Fondu d'apparition des images
+
+     Le site charge la plupart de ses visuels en `lazy` : ils
+     arrivent pendant le défilement et se peignent d'un bloc,
+     sans transition, ce qui contredit le reste de la page.
+
+     Trois précautions :
+     • on ne masque jamais une image déjà peinte (cache,
+       `fetchpriority="high"` du hero) — la masquer pour la
+       redécouvrir produirait un clignotement visible ;
+     • les SVG de l'interface (logo, pictogrammes) sont écartés :
+       ils sont instantanés et font partie du cadre, pas du
+       contenu ;
+     • `error` révèle l'image au même titre que `load`, sinon un
+       visuel introuvable emporterait son texte alternatif dans
+       l'invisible.
      ────────────────────────────────────────────────────────── */
-  const WIPE_TARGETS = [
-    '.dual-card-img', '.service-detail-img', '.about-img',
-    '.news-card-img-wrap', '.article-hero-img',
-  ];
+  function initImageFade() {
+    if (reduceMotion) return;
 
-  function initWipe() {
-    if (reduceMotion || !('IntersectionObserver' in window)) return;
+    /** Les pixels sont disponibles : l'image est déjà à l'écran. */
+    const isPainted = img => img.complete && img.naturalWidth > 0;
 
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('in');
-        io.unobserve(entry.target);
-      });
-    }, { threshold: 0.2 });
+    const pending = [];
 
-    const wiped = [];
-    WIPE_TARGETS.forEach(sel => {
-      document.querySelectorAll(sel).forEach((el, i) => {
-        el.classList.add('hc-wipe');
-        if (i > 0) el.style.setProperty('--wd', Math.min(i, 3) * 110 + 'ms');
-        io.observe(el);
-        wiped.push(el);
-      });
+    document.querySelectorAll('img').forEach(img => {
+      if (img.classList.contains('hc-img')) return;
+      if (/\.svg(\?|#|$)/i.test(img.getAttribute('src') || '')) return;
+      if (isPainted(img)) return;
+
+      const reveal = () => img.classList.add('is-loaded');
+      img.classList.add('hc-img');
+      img.addEventListener('load', reveal, { once: true });
+      img.addEventListener('error', reveal, { once: true });
+
+      // Le chargement a pu se terminer entre le test ci-dessus et
+      // la pose des écouteurs : dans ce cas aucun événement ne
+      // viendra plus, il faut révéler tout de suite.
+      if (isPainted(img)) reveal();
+      else pending.push(img);
     });
 
-    // Filet de sécurité : un volet qui resterait fermé masquerait
-    // l'image. Passé ce délai, on découvre tout ce qui est visible
-    // à l'écran quoi qu'il arrive.
-    setTimeout(() => {
-      wiped.forEach(el => {
-        const r = el.getBoundingClientRect();
-        if (r.top < window.innerHeight && r.bottom > 0) el.classList.add('in');
-      });
-    }, 2500);
+    if (!pending.length) return;
+
+    // Filet de sécurité : une requête interrompue n'émet ni
+    // `load` ni `error` sur tous les
+    // navigateurs. Passé ce délai, plus rien ne reste caché.
+    setTimeout(() => pending.forEach(img => img.classList.add('is-loaded')), 6000);
   }
 
   /* ──────────────────────────────────────────────────────────
