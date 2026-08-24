@@ -2,27 +2,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* ── Scroll reveal ── */
-  const selectors = [
-    '.service-main-card', '.support-card', '.stat-item',
-    '.dual-card', '.news-card', '.trust-badge',
-    '.contact-left', '.contact-form',
-  ];
-
-  selectors.forEach(sel => {
-    document.querySelectorAll(sel).forEach((el, i) => {
-      el.classList.add('reveal');
-      el.style.transitionDelay = `${i * 0.07}s`;
-    });
-  });
-
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
-
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  /* La révélation au défilement est désormais assurée par motion.js :
+     cascade calculée par grille et prise en charge de
+     `prefers-reduced-motion`. */
 
   /* ──────────────────────────────────────────────────────────────────────
      Widget flottant de prise de rendez-vous (TidyCal)

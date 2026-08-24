@@ -1,0 +1,1046 @@
+/* ============================================================
+   HELLO CORP — SYSTÈME D'ANIMATION & MICRO-INTERACTIONS
+   ------------------------------------------------------------
+   Principes retenus (style corporate) :
+   • Durées courtes (150–400 ms) sur les interactions, plus
+     longues (600–800 ms) sur les entrées de contenu.
+   • Uniquement `transform` et `opacity` : ces deux propriétés
+     sont composées par le GPU et n'entraînent ni recalcul de
+     mise en page ni repeinture.
+   • Aucun rebond, aucune rotation, aucun clignotement : le
+     mouvement guide le regard, il ne cherche pas à capter
+     l'attention pour lui-même.
+   • Respect intégral de `prefers-reduced-motion` (bloc 10).
+
+   Ce fichier se charge APRÈS style.css / pages.css et ne fait
+   que surcharger : aucune règle existante n'est supprimée.
+   ============================================================ */
+
+:root {
+  /* Courbes d'accélération */
+  --ease-out:  cubic-bezier(.22, .61, .36, 1);   /* interactions */
+  --ease-expo: cubic-bezier(.16, 1,   .30, 1);   /* entrées      */
+  --ease-soft: cubic-bezier(.40, 0,   .20, 1);   /* déplacements */
+
+  /* Durées */
+  --dur-xs:    140ms;
+  --dur-sm:    220ms;
+  --dur-md:    360ms;
+  --dur-lg:    620ms;
+  --dur-zoom:  900ms;   /* zoom d'image : lent = perçu comme premium */
+  --dur-sweep: 950ms;   /* bandeau lumineux                          */
+
+  /* Amplitude du zoom au survol */
+  --media-zoom: 1.07;
+}
+
+/* ============================================================
+   1. ACCESSIBILITÉ — préalable indispensable à toute animation
+   ============================================================ */
+
+/* Lien d'évitement : premier élément focusable de la page,
+   invisible tant qu'il n'a pas le focus clavier. */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 2000;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  background: var(--blue);
+  color: #fff;
+  font-size: .85rem;
+  font-weight: 600;
+  transition: top var(--dur-sm) var(--ease-out);
+}
+.skip-link:focus { top: 12px; }
+
+/* Anneau de focus visible et homogène sur tous les éléments
+   interactifs (le site n'en avait que sur les champs de
+   formulaire — WCAG 2.4.7). `:focus-visible` ne se déclenche
+   qu'au clavier : la navigation à la souris n'est pas affectée. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+.hero a:focus-visible,
+.page-hero a:focus-visible,
+.article-hero a:focus-visible,
+.page-cta a:focus-visible,
+.header-top a:focus-visible,
+.footer a:focus-visible {
+  outline-color: var(--yellow);
+}
+
+/* ============================================================
+   2. IMAGES — zoom au survol + bandeau lumineux droite → gauche
+   ------------------------------------------------------------
+   `.hc-media` est la classe générique ; les conteneurs déjà
+   présents dans le site y sont rattachés pour éviter d'avoir
+   à modifier le HTML existant.
+   ============================================================ */
+
+.hc-media,
+.dual-card-img,
+.news-card-img-wrap,
+.service-detail-img,
+.about-img,
+.article-hero-img {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;          /* confine le bandeau à ce contexte */
+  background: var(--gray-100); /* évite le flash blanc au chargement */
+}
+
+.hc-media > img,
+.dual-card-img img,
+.news-card-img-wrap img,
+.service-detail-img img,
+.about-img img,
+.article-hero-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1);
+  transform-origin: center;
+  transition:
+    transform var(--dur-zoom) var(--ease-out),
+    filter    var(--dur-zoom) var(--ease-out);
+}
+
+/* Le bandeau : une bande lumineuse inclinée, garée hors cadre à
+   droite, qui traverse l'image vers la gauche.
+   Largeur 55 % du conteneur → course totale = 100 % + 55 %,
+   soit 282 % de sa propre largeur. */
+.hc-media::after,
+.dual-card-img::after,
+.news-card-img-wrap::after,
+.service-detail-img::after,
+.about-img::after,
+.article-hero-img::after {
+  content: "";
+  position: absolute;
+  top: -25%;
+  bottom: -25%;
+  left: 100%;
+  width: 55%;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(0, 0, 0) skewX(-18deg);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0)     0%,
+    rgba(255, 255, 255, .10)  25%,
+    rgba(255, 255, 255, .34)  50%,
+    rgba(255, 255, 255, .10)  75%,
+    rgba(255, 255, 255, 0)   100%
+  );
+}
+
+@keyframes hc-sweep {
+  0%   { opacity: 0; transform: translate3d(0, 0, 0)      skewX(-18deg); }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(-282%, 0, 0) skewX(-18deg); }
+}
+
+/* Déclencheurs : certains conteneurs sont survolés directement,
+   d'autres au survol de la carte qui les contient.
+   `:focus-within` rejoue la même chose au clavier. */
+.hc-media:hover::after,
+.hc-media:focus-within::after,
+.service-detail-img:hover::after,
+.about-img:hover::after,
+.article-hero-img:hover::after,
+.dual-card:hover .dual-card-img::after,
+.dual-card:focus-within .dual-card-img::after,
+.news-card:hover .news-card-img-wrap::after,
+.news-card:focus-within .news-card-img-wrap::after {
+  animation: hc-sweep var(--dur-sweep) var(--ease-out);
+}
+
+.hc-media:hover > img,
+.hc-media:focus-within > img,
+.service-detail-img:hover img,
+.about-img:hover img,
+.article-hero-img:hover img,
+.dual-card:hover .dual-card-img img,
+.dual-card:focus-within .dual-card-img img,
+.news-card:hover .news-card-img-wrap img,
+.news-card:focus-within .news-card-img-wrap img {
+  transform: scale(var(--media-zoom));
+}
+
+/* Le voile dégradé des cartes « Approche / Expertises » se
+   renforce au survol : le zoom paraît plus profond. */
+.dual-card-img-overlay {
+  z-index: 1;
+  opacity: .85;
+  transition: opacity var(--dur-zoom) var(--ease-out);
+}
+.dual-card:hover .dual-card-img-overlay { opacity: 1; }
+
+/* ============================================================
+   3. CARTES — élévation et filet d'accent
+   ============================================================ */
+
+.service-main-card,
+.support-card,
+.why-card,
+.news-card,
+.dual-card,
+.value-card {
+  position: relative;
+  transition:
+    transform    var(--dur-md) var(--ease-out),
+    box-shadow   var(--dur-md) var(--ease-out),
+    border-color var(--dur-md) var(--ease-out),
+    background   var(--dur-md) var(--ease-out);
+}
+
+.support-card:hover,
+.why-card:hover,
+.value-card:hover { transform: translateY(-6px); }
+.news-card:hover  { transform: translateY(-7px); }
+
+/* Filet d'accent qui se déploie depuis la gauche.
+   `scaleX` sur une barre déjà en place : aucun reflow. */
+.support-card::before,
+.why-card::before,
+.value-card::before,
+.news-card::before,
+.service-main-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 3;
+  background: var(--blue);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-md) var(--ease-out);
+}
+.support-card:hover::before,
+.why-card:hover::before,
+.value-card:hover::before,
+.news-card:hover::before,
+.news-card:focus-within::before,
+.service-main-card:hover::before { transform: scaleX(1); }
+
+/* Les trois services principaux reprennent la couleur de leur icône. */
+.services-main-grid > .service-main-card:nth-child(2)::before { background: var(--orange); }
+.services-main-grid > .service-main-card:nth-child(3)::before { background: var(--yellow); }
+
+/* Icônes : léger agrandissement, puis inversion de couleur. */
+.service-main-icon,
+.support-icon,
+.why-icon,
+.contact-info-icon {
+  transition:
+    transform  var(--dur-md) var(--ease-out),
+    background var(--dur-md) var(--ease-out),
+    color      var(--dur-md) var(--ease-out),
+    box-shadow var(--dur-md) var(--ease-out);
+}
+.service-main-card:hover .service-main-icon,
+.support-card:hover .support-icon,
+.why-card:hover .why-icon { transform: scale(1.08) translateY(-2px); }
+
+.why-card:hover .why-icon {
+  background: var(--blue);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(0, 65, 125, .26);
+}
+.support-card:hover .support-icon { box-shadow: 0 10px 24px rgba(0, 65, 125, .26); }
+
+/* Puces « ✓ » : léger décalage en cascade au survol de la carte. */
+.approach-list li { transition: transform var(--dur-sm) var(--ease-out); }
+.dual-card:hover .approach-list li { transform: translateX(4px); }
+.approach-list li:nth-child(1) { transition-delay:   0ms; }
+.approach-list li:nth-child(2) { transition-delay:  40ms; }
+.approach-list li:nth-child(3) { transition-delay:  80ms; }
+.approach-list li:nth-child(4) { transition-delay: 120ms; }
+
+.check { transition: transform var(--dur-sm) var(--ease-out); }
+.dual-card:hover .check { transform: scale(1.12); }
+
+/* ============================================================
+   4. LIENS ET BOUTONS
+   ============================================================ */
+
+/* « Découvrir → » : soulignement qui se déploie + flèche qui
+   avance. `.lm-arrow` est isolée par motion.js à partir du
+   caractère « → » déjà présent dans le texte. */
+.link-more {
+  position: relative;
+  padding-bottom: 2px;
+}
+.link-more::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform var(--dur-md) var(--ease-out);
+}
+.link-more:hover::after,
+.link-more:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+.lm-arrow {
+  display: inline-block;
+  transition: transform var(--dur-sm) var(--ease-out);
+}
+.link-more:hover { gap: 4px; }   /* le décalage est porté par .lm-arrow seule */
+.link-more:hover .lm-arrow,
+.news-card:hover .link-more .lm-arrow,
+.service-main-card:hover .link-more .lm-arrow,
+.support-card:hover .link-more .lm-arrow { transform: translateX(5px); }
+
+/* Reflet balayant les boutons pleins, dans le même sens que
+   celui des images (droite → gauche) pour rester cohérent. */
+.btn-primary,
+.nav-cta,
+.btn-white {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-primary::after,
+.nav-cta::after,
+.btn-white::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  bottom: -50%;
+  left: 100%;
+  width: 60%;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(0, 0, 0) skewX(-20deg);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0)    0%,
+    rgba(255, 255, 255, .28) 50%,
+    rgba(255, 255, 255, 0)  100%
+  );
+}
+.btn-white::after {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 65, 125, 0)    0%,
+    rgba(0, 65, 125, .12) 50%,
+    rgba(0, 65, 125, 0)  100%
+  );
+}
+
+@keyframes hc-sweep-btn {
+  0%   { opacity: 0; transform: translate3d(0, 0, 0)      skewX(-20deg); }
+  15%  { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(-270%, 0, 0) skewX(-20deg); }
+}
+.btn-primary:hover::after,
+.btn-primary:focus-visible::after,
+.nav-cta:hover::after,
+.btn-white:hover::after { animation: hc-sweep-btn 720ms var(--ease-out); }
+
+/* Remplissage depuis la gauche pour le bouton ajouré du hero.
+   (`.btn-outline` bascule déjà en aplat plein : on n'y touche pas.) */
+.btn-outline-white {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    color        var(--dur-sm) var(--ease-out),
+    border-color var(--dur-sm) var(--ease-out),
+    transform    var(--dur-sm) var(--ease-out);
+}
+.btn-outline-white::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #fff;
+  opacity: .16;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-md) var(--ease-out);
+}
+.btn-outline-white:hover::before { transform: scaleX(1); }
+.btn-outline-white:hover { transform: translateY(-2px); border-color: #fff; }
+
+/* Retour tactile au clic : confirme l'action sans attendre le
+   chargement de la page suivante. */
+.btn:active,
+.nav-cta:active,
+.btn-outline-white:active { transform: translateY(0) scale(.985); }
+
+/* ============================================================
+   5. NAVIGATION ET EN-TÊTE
+   ============================================================ */
+
+.nav-links > li > a {
+  position: relative;
+  transition: color var(--dur-sm) var(--ease-out), background var(--dur-sm) var(--ease-out);
+}
+.nav-links > li > a:not(.nav-cta)::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 6px;
+  height: 2px;
+  background: var(--orange);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-sm) var(--ease-out);
+}
+.nav-links > li > a:not(.nav-cta):hover::after,
+.nav-links > li:hover > a:not(.nav-cta)::after,
+.nav-links > li > a:not(.nav-cta):focus-visible::after { transform: scaleX(1); }
+
+.caret { display: inline-block; transition: transform var(--dur-sm) var(--ease-out); }
+.has-dropdown:hover .caret,
+.has-dropdown.open .caret { transform: rotate(180deg); }
+
+.dropdown {
+  transform-origin: top center;
+  transition:
+    opacity    var(--dur-sm) var(--ease-out),
+    transform  var(--dur-sm) var(--ease-out),
+    visibility var(--dur-sm) linear;
+}
+.dropdown li a {
+  transition:
+    padding-left var(--dur-xs) var(--ease-out),
+    background   var(--dur-xs) var(--ease-out),
+    color        var(--dur-xs) var(--ease-out);
+}
+.dropdown li a:hover { padding-left: 22px; }
+
+/* Ouverture au survol : sur pointeur fin, le panneau se déploie
+   sans clic. Le JS (.open) reste la source de vérité au clavier
+   et sur tactile, où le survol n'existe pas. Borné à la
+   disposition « barre » : sous 1080 px le panneau devient un
+   accordéon piloté par le burger, qu'un survol ne doit pas ouvrir. */
+@media (hover: hover) and (min-width: 1081px) {
+  .has-dropdown:hover > .dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+  .has-dropdown:hover > a {
+    color: var(--blue);
+    background: var(--blue-bg);
+  }
+  /* Le panneau est décollé de 8 px de son entrée : sans ce pont
+     invisible, la souris traverse une zone morte en descendant
+     et le menu se referme sous le curseur. */
+  .has-dropdown::before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 10px;
+  }
+}
+
+/* Le libellé se soulève avec son filet. */
+.nav-links > li > a:not(.nav-cta) {
+  transition:
+    color      var(--dur-sm) var(--ease-out),
+    background var(--dur-sm) var(--ease-out),
+    transform  var(--dur-sm) var(--ease-out);
+}
+.nav-links > li > a:not(.nav-cta):hover,
+.nav-links > li:hover > a:not(.nav-cta),
+.nav-links > li > a:not(.nav-cta):focus-visible { transform: translate3d(0, -1px, 0); }
+
+/* Entrées du panneau : un repère orange se déplie à gauche, en
+   écho au filet des entrées de premier niveau. */
+.dropdown li a { position: relative; }
+.dropdown li a::before {
+  content: "";
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  width: 3px;
+  height: 0;
+  border-radius: 2px;
+  background: var(--orange);
+  transform: translateY(-50%);
+  transition: height var(--dur-xs) var(--ease-out);
+}
+.dropdown li a:hover::before,
+.dropdown li a:focus-visible::before { height: 18px; }
+
+/* En-tête compacté au défilement : la barre devient moins
+   envahissante une fois la lecture engagée. */
+.header { transition: box-shadow var(--dur-md) var(--ease-out); }
+.header.is-scrolled {
+  box-shadow: 0 1px 0 rgba(0, 45, 87, .10), 0 14px 34px rgba(18, 35, 52, .12);
+}
+.nav-inner { transition: height var(--dur-md) var(--ease-soft); }
+.header.is-scrolled .nav-inner { height: 62px; }
+.logo-img { transition: transform var(--dur-md) var(--ease-soft); }
+.header.is-scrolled .logo-img { transform: scale(.9); }
+.logo:hover .logo-img { transform: scale(1.06) rotate(-3deg); }
+
+/* ============================================================
+   6. HERO — fond animé, entrée en cascade
+   ============================================================ */
+
+.hero { isolation: isolate; }
+
+/* Zoom très lent (« Ken Burns ») : donne de la profondeur sans
+   jamais capter l'attention. 26 s, aller-retour, en boucle. */
+@keyframes hc-ken-burns {
+  from { transform: scale(1)    translate3d(0, 0, 0); }
+  to   { transform: scale(1.09) translate3d(-1.2%, -1%, 0); }
+}
+.hero-img {
+  transform-origin: center top;
+  animation: hc-ken-burns 26s var(--ease-soft) infinite alternate;
+}
+
+/* Bandeau lumineux traversant le hero une fois, à l'arrivée. */
+.hero::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  width: 40%;
+  z-index: 0;          /* au-dessus du voile, sous .hero-content */
+  pointer-events: none;
+  opacity: 0;
+  transform: skewX(-16deg);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0)    0%,
+    rgba(255, 255, 255, .16) 50%,
+    rgba(255, 255, 255, 0)  100%
+  );
+  animation: hc-sweep 1600ms var(--ease-out) 520ms 1;
+}
+
+/* Entrée en cascade du contenu des bandeaux de titre. */
+@keyframes hc-rise {
+  from { opacity: 0; transform: translate3d(0, 22px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.hero-content > *,
+.page-hero .container > *,
+.article-hero-grid > * {
+  animation: hc-rise 760ms var(--ease-expo) both;
+}
+.hero-content > .hero-badge   { animation-delay:  80ms; }
+.hero-content > h1            { animation-delay: 180ms; }
+.hero-content > p             { animation-delay: 280ms; }
+.hero-content > .hero-actions { animation-delay: 380ms; }
+
+.page-hero .container > .breadcrumb { animation-delay:  60ms; }
+.page-hero .container > h1          { animation-delay: 160ms; }
+.page-hero .container > p           { animation-delay: 260ms; }
+
+.article-hero-grid > *:nth-child(1) { animation-delay: 100ms; }
+.article-hero-grid > *:nth-child(2) { animation-delay: 240ms; }
+
+/* Parallaxe : motion.js écrit `--hero-shift` pendant le
+   défilement et remplace alors le Ken Burns. */
+.hero-parallax .hero-img {
+  animation: none;
+  transform: translate3d(0, var(--hero-shift, 0px), 0) scale(1.12);
+}
+
+/* ============================================================
+   7. RÉVÉLATION AU DÉFILEMENT
+   ------------------------------------------------------------
+   `--d` (délai) est écrit par motion.js et remis à zéro à
+   chaque nouvelle grille : la cascade ne s'accumule pas d'un
+   bout à l'autre de la page.
+   ============================================================ */
+
+.reveal {
+  opacity: 0;
+  transform: translate3d(0, 26px, 0);
+  transition:
+    opacity   var(--dur-lg) var(--ease-expo) var(--d, 0ms),
+    transform var(--dur-lg) var(--ease-expo) var(--d, 0ms);
+}
+.reveal--left  { transform: translate3d(-28px, 0, 0); }
+.reveal--right { transform: translate3d( 28px, 0, 0); }
+.reveal--zoom  { transform: scale(.96); }
+
+.reveal.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ============================================================
+   8. ÉLÉMENTS FLOTTANTS
+   ============================================================ */
+
+/* Barre de progression de lecture (articles et pages légales). */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1200;
+  width: 100%;
+  height: 3px;
+  transform: scaleX(var(--progress, 0));
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--blue) 0%, var(--blue-light) 55%, var(--orange) 100%);
+  pointer-events: none;
+}
+
+/* Retour en haut de page. */
+.to-top {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 900;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 50%;
+  background: var(--blue);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 10px 28px rgba(18, 35, 52, .22);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, 14px, 0);
+  transition:
+    opacity    var(--dur-md) var(--ease-out),
+    transform  var(--dur-md) var(--ease-out),
+    visibility var(--dur-md) linear,
+    background var(--dur-sm) var(--ease-out);
+}
+.to-top.is-visible { opacity: 1; visibility: visible; transform: none; }
+.to-top:hover { background: var(--blue-light); transform: translateY(-3px); }
+.to-top svg { width: 20px; height: 20px; }
+
+/* Bouton flottant de prise de rendez-vous : pulsation d'appel
+   discrète, jouée trois fois puis arrêtée. */
+@keyframes hc-pulse {
+  0%   { box-shadow: 0 10px 28px rgba(18,35,52,.22), 0 0 0 0    rgba(232,119,34,.45); }
+  70%  { box-shadow: 0 10px 28px rgba(18,35,52,.22), 0 0 0 16px rgba(232,119,34,0);   }
+  100% { box-shadow: 0 10px 28px rgba(18,35,52,.22), 0 0 0 0    rgba(232,119,34,0);   }
+}
+.booking-widget-btn {
+  transition: transform var(--dur-sm) var(--ease-out), background var(--dur-sm) var(--ease-out);
+}
+.booking-widget-btn:hover { transform: scale(1.07); }
+.booking-widget-btn.is-calling { animation: hc-pulse 2.2s var(--ease-out) 3; }
+.booking-widget-panel { transform-origin: bottom right; }
+
+/* ============================================================
+   9. FORMULAIRE ET DIVERS
+   ============================================================ */
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  transition:
+    border-color var(--dur-sm) var(--ease-out),
+    box-shadow   var(--dur-sm) var(--ease-out),
+    background   var(--dur-sm) var(--ease-out);
+}
+.form-group label { transition: color var(--dur-sm) var(--ease-out); }
+.form-group:focus-within label { color: var(--blue); }
+
+.form-status--success,
+.form-status--error { animation: hc-rise 420ms var(--ease-expo) both; }
+
+.trust-badge { transition: all var(--dur-sm) var(--ease-out); }
+.trust-badge:hover { transform: translateY(-3px); }
+
+.contact-info-item:hover .contact-info-icon {
+  transform: scale(1.08);
+  background: var(--blue);
+  color: #fff;
+}
+
+.footer a { transition: color var(--dur-xs) var(--ease-out), opacity var(--dur-xs) var(--ease-out); }
+
+/* Ancrage : compense la hauteur de l'en-tête collant lors des
+   sauts « #section », qui arrivaient sous la barre de navigation. */
+:target        { scroll-margin-top: 120px; }
+section[id]    { scroll-margin-top: 108px; }
+
+/* ============================================================
+   10. MOUVEMENT RÉDUIT — WCAG 2.3.3 / 2.2.2
+   ------------------------------------------------------------
+   Le système d'exploitation signale une sensibilité au
+   mouvement : tout est neutralisé, le contenu reste visible.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; }
+  .hero-img { animation: none; transform: none; }
+  .hero-parallax .hero-img { transform: scale(1); }
+  .hero::after { display: none; }
+  .hc-media:hover > img,
+  .dual-card:hover .dual-card-img img,
+  .news-card:hover .news-card-img-wrap img,
+  .service-detail-img:hover img,
+  .about-img:hover img,
+  .article-hero-img:hover img { transform: none; }
+}
+
+/* ============================================================
+   11. AJUSTEMENTS MOBILES
+   ------------------------------------------------------------
+   Sur écran tactile, « survol » n'existe pas et l'élévation des
+   cartes consomme de la place pour rien : on allège.
+   ============================================================ */
+@media (hover: none) {
+  .hero-img { animation: none; }
+  .support-card:hover,
+  .why-card:hover,
+  .value-card:hover,
+  .news-card:hover { transform: none; }
+}
+
+@media (max-width: 768px) {
+  :root { --media-zoom: 1.03; }
+  .to-top { right: 16px; bottom: 16px; width: 42px; height: 42px; }
+  .reveal { transform: translate3d(0, 16px, 0); }
+  .nav-links > li > a:not(.nav-cta)::after { display: none; }
+}
+
+/* ============================================================
+   12. MOUVEMENT AMBIANT
+   ------------------------------------------------------------
+   Les règles précédentes ne s'animent qu'au survol ou à
+   l'apparition : entre deux gestes, la page ne bouge plus.
+   Ce bloc ajoute une respiration continue — lente, de faible
+   amplitude, et jamais au même rythme d'un élément à l'autre
+   pour éviter l'effet « guirlande ».
+   ============================================================ */
+
+/* ── Hero : la lumière se déplace ──────────────────────────── */
+
+/* Le voile dégradé glisse lentement d'un bord à l'autre.
+   `background-size: 220%` fournit la matière nécessaire au
+   déplacement, sans jamais découvrir de zone non teintée. */
+/* Le voile n'est PAS animé : son degrade est calibré pour le
+   contraste du texte du hero, et le déplacer amenait son
+   extrémité claire sous le paragraphe. Seuls les halos bougent. */
+
+/* Deux halos qui dérivent derrière le texte : c'est ce qui
+   donne l'impression que le bandeau « vit » même à l'arrêt. */
+@keyframes hc-orb-a {
+  0%, 100% { transform: translate3d(-6%,  4%, 0) scale(1);    }
+  50%      { transform: translate3d( 8%, -6%, 0) scale(1.18); }
+}
+@keyframes hc-orb-b {
+  0%, 100% { transform: translate3d( 6%, -4%, 0) scale(1.12); }
+  50%      { transform: translate3d(-7%,  7%, 0) scale(.94);  }
+}
+.hero::before,
+.page-hero::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  /* Au-dessus du voile (sinon les halos ne se verraient pas) mais
+     sous .hero-content, qui porte aussi z-index: 1 et vient après
+     dans l'ordre du document. Les deux halos sont cantonnés à la
+     moitié droite, là où aucun texte ne passe. */
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(34% 42% at 68% 28%, rgba(96, 184, 224, .16) 0%, transparent 62%),
+    radial-gradient(30% 38% at 86% 72%, rgba(232, 119, 34, .14) 0%, transparent 64%);
+  animation: hc-orb-a 19s var(--ease-soft) infinite;
+}
+.page-hero::before { animation: hc-orb-b 24s var(--ease-soft) infinite; }
+.page-hero { position: relative; }
+.page-hero .container,
+.article-hero .container { position: relative; z-index: 1; }
+
+/* ── Bandeau défilant (droite → gauche) ────────────────────── */
+
+.hc-marquee {
+  position: relative;
+  overflow: hidden;
+  padding: 18px 0;
+  background: var(--blue-dark);
+  border-top: 1px solid rgba(255, 255, 255, .10);
+  border-bottom: 1px solid rgba(255, 255, 255, .10);
+  /* Les deux extrémités s'estompent : la boucle n'a pas de
+     point d'entrée ni de sortie visible. */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.hc-marquee-track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  animation: hc-marquee 38s linear infinite;
+}
+/* La piste est dupliquée par motion.js : à -50 % la seconde
+   copie occupe exactement la position de départ de la première,
+   la boucle est donc invisible. */
+@keyframes hc-marquee {
+  from { transform: translate3d(0, 0, 0);    }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+/* Courtoisie : on suspend le défilement pendant la lecture. */
+.hc-marquee:hover .hc-marquee-track,
+.hc-marquee:focus-within .hc-marquee-track { animation-play-state: paused; }
+
+.hc-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 26px;
+  padding: 0 26px;
+  white-space: nowrap;
+  font-size: .82rem;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .74);
+}
+.hc-marquee-item::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--orange);
+  flex-shrink: 0;
+}
+
+
+/* Le logo, répété dans la piste : il rythme la liste et ancre la
+   marque. Le fond du bandeau et celui du disque étant tous deux
+   très sombres, une pastille claire détache le médaillon. */
+.hc-marquee-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 30px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.hc-marquee-logo img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, .06);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .22);
+}
+.hc-marquee-logo-name {
+  font-size: .92rem;
+  font-weight: 800;
+  letter-spacing: .01em;
+  color: var(--white);
+}
+/* ── Icônes : flottement ───────────────────────────────────── */
+
+/* Le mouvement porte sur le glyphe et non sur la pastille : le
+   `transform` d'agrandissement au survol reste disponible. */
+@keyframes hc-float {
+  0%, 100% { transform: translate3d(0,  0,   0); }
+  50%      { transform: translate3d(0, -3px, 0); }
+}
+.service-main-icon svg,
+.support-icon svg,
+.why-icon svg,
+.contact-info-icon svg {
+  animation: hc-float 4.6s var(--ease-soft) infinite;
+}
+/* Décalages distincts : les icônes ne repassent jamais toutes
+   par le même point au même instant. */
+.support-card:nth-child(2) .support-icon svg,
+.why-card:nth-child(2) .why-icon svg,
+.service-main-card:nth-child(2) .service-main-icon svg { animation-delay: -1.5s; }
+.support-card:nth-child(3) .support-icon svg,
+.why-card:nth-child(3) .why-icon svg,
+.service-main-card:nth-child(3) .service-main-icon svg { animation-delay: -3.1s; }
+.contact-info-item:nth-child(2) svg { animation-delay: -1.1s; }
+.contact-info-item:nth-child(3) svg { animation-delay: -2.3s; }
+.contact-info-item:nth-child(4) svg { animation-delay: -3.4s; }
+
+/* ── Appel à l'action : reflet périodique ──────────────────── */
+
+/* Un passage toutes les 5,5 s : assez fréquent pour attirer
+   l'oeil vers le bouton principal, assez espacé pour ne pas
+   être perçu comme un clignotement. */
+@keyframes hc-shine-idle {
+  0%   { opacity: 0; transform: translate3d(0, 0, 0)      skewX(-20deg); }
+  4%   { opacity: 1; }
+  22%  { opacity: 0; transform: translate3d(-270%, 0, 0) skewX(-20deg); }
+  100% { opacity: 0; transform: translate3d(-270%, 0, 0) skewX(-20deg); }
+}
+.hero-actions .btn-primary::after,
+.page-cta .btn-primary::after { animation: hc-shine-idle 5.5s var(--ease-out) 1.8s infinite; }
+
+/* La pastille de section respire : point d'ancrage visuel. */
+@keyframes hc-blink {
+  0%, 100% { opacity: 1;   transform: scale(1);   }
+  50%      { opacity: .35; transform: scale(.72); }
+}
+.section-tag::before,
+.service-detail-tag::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--orange);
+  vertical-align: middle;
+  animation: hc-blink 2.6s var(--ease-soft) infinite;
+}
+
+/* ── Titres de section : filet qui se trace ────────────────── */
+
+.section-header h2 { position: relative; }
+.section-header h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  margin: 16px auto 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--blue) 0%, var(--orange) 100%);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition:
+    transform 820ms var(--ease-expo) 200ms,
+    width     var(--dur-md) var(--ease-out);
+}
+.section-header.in h2::after { transform: scaleX(1); }
+.section-header--row h2::after { margin-left: 0; }
+
+/* Survol du bloc de titre : le filet s'étire et le titre prend
+   la couleur de marque. Le filet n'est étiré que s'il a déjà été
+   tracé (.in), sinon on animerait une barre de largeur nulle. */
+.section-header h2 { transition: color var(--dur-sm) var(--ease-out); }
+.section-header:hover h2 { color: var(--blue); }
+.section-header.in:hover h2::after { width: 96px; }
+
+/* ── Titres de carte ───────────────────────────────────────── */
+
+/* Le titre suit la carte : il se teinte quand elle est survolée,
+   comme le fait déjà son icône. Le survol porte sur la carte
+   entière, pas sur le seul texte : c'est elle la cible cliquable. */
+.service-main-card h3,
+.support-card h4,
+.why-card h3,
+.value-card h3,
+.news-card-body h3,
+.news-card-body h3 a { transition: color var(--dur-sm) var(--ease-out); }
+.service-main-card:hover h3,
+.support-card:hover h4,
+.why-card:hover h3,
+.value-card:hover h3,
+.news-card:hover .news-card-body h3,
+.news-card:hover .news-card-body h3 a { color: var(--blue); }
+
+/* ── Volet de dévoilement des visuels (droite → gauche) ────── */
+
+/* Un aplat couvre l'image puis se retire vers la gauche : même
+   sens de lecture que le bandeau lumineux du survol. */
+.hc-wipe::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background: var(--blue-dark);
+  transform: translate3d(0, 0, 0);
+  transition: transform 900ms var(--ease-expo) var(--wd, 0ms);
+  pointer-events: none;
+}
+.hc-wipe.in::before { transform: translate3d(-101%, 0, 0); }
+
+/* ── Titre du hero : entrée mot à mot ──────────────────────── */
+
+@keyframes hc-word {
+  from { opacity: 0; transform: translate3d(0, 28px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+.hero-content h1.is-split { animation: none; opacity: 1; }
+.hero-content h1.is-split .w {
+  display: inline-block;
+  color: inherit;   /* neutralise `.hero-content h1 span { color: jaune }` */
+  animation: hc-word 720ms var(--ease-expo) both;
+  animation-delay: calc(var(--i, 0) * 55ms + 160ms);
+}
+
+/* ── Navigation : rubrique en cours de lecture ─────────────── */
+
+/* Le filet reste allumé sous la rubrique visible à l'écran
+   (renseignée par motion.js au défilement). */
+.nav-links > li > a.is-current::after { transform: scaleX(1); }
+
+/* ── Neutralisations ───────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-overlay,
+  .hero::before,
+  .page-hero::before,
+  .hc-marquee-track,
+  .service-main-icon svg,
+  .support-icon svg,
+  .why-icon svg,
+  .contact-info-icon svg,
+  .hero-actions .btn-primary::after,
+  .page-cta .btn-primary::after,
+  .section-tag::before,
+  .service-detail-tag::before { animation: none !important; }
+  .hc-wipe::before { display: none; }
+  .hero-content h1.is-split .w { animation: none; opacity: 1; transform: none; }
+  .section-header h2::after { transform: scaleX(1); }
+  /* Les survols de couleur restent : seuls les déplacements tombent. */
+  .nav-links > li > a:not(.nav-cta):hover,
+  .nav-links > li:hover > a:not(.nav-cta) { transform: none; }
+  .section-header.in:hover h2::after { width: 60px; }
+  .dropdown li a:hover { padding-left: 20px; }
+}
+
+@media (hover: none) {
+  /* Sur mobile la page défile vite : le flottement des icônes et
+     les halos consommeraient de la batterie pour un effet peu vu. */
+  .hero::before,
+  .page-hero::before,
+  .service-main-icon svg,
+  .support-icon svg,
+  .why-icon svg,
+  .contact-info-icon svg { animation: none; }
+  .hc-marquee-track { animation-duration: 26s; }
+}

@@ -1122,7 +1122,11 @@ img { display: block; max-width: 100%; height: auto; }
   .contact-grid { grid-template-columns: 1fr; gap: 40px; }
 }
 
-@media (max-width: 768px) {
+/* La barre de navigation compte 7 entrées + 1 bouton : elle ne tient
+   plus des 1180 px. Le menu déroulant bascule donc en menu burger à
+   1080 px et non à 768 px, sinon le bouton « Nous contacter » sortait
+   de l'écran entre ces deux tailles. */
+@media (max-width: 1080px) {
   /* Mobile nav */
   .nav-links {
     display: none;
@@ -1169,6 +1173,9 @@ img { display: block; max-width: 100%; height: auto; }
   .dropdown li a:hover { background: var(--blue-bg); }
   .hamburger { display: flex; }
   .navbar { position: relative; }
+}
+
+@media (max-width: 768px) {
 
   .hero-content h1 { font-size: 2rem; }
   .services-main-grid { grid-template-columns: 1fr; }
@@ -1176,6 +1183,9 @@ img { display: block; max-width: 100%; height: auto; }
   .service-main-card:last-child { border-bottom: none; }
   .support-grid { grid-template-columns: 1fr 1fr; }
   .news-grid { grid-template-columns: 1fr; }
+  /* .why-grid restait sur 3 colonnes à toutes les tailles : la section
+     débordait horizontalement sous 500 px et le texte était tronqué. */
+  .why-grid { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .contact-form { padding: 28px 20px; }

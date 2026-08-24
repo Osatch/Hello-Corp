@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="style.css" />
   <!-- Mesure d'audience Matomo (configuration dans matomo.js) -->
   <script src="matomo.js"></script>
+  <link rel="stylesheet" href="motion.css" />
 </head>
 <body>
 
@@ -23,8 +24,7 @@
     <img
       class="hero-img"
       src="https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?auto=format&fit=crop&w=1600&q=80"
-      alt="Équipe Hello Corp au travail"
-    />
+      alt="Équipe Hello Corp au travail" decoding="async" fetchpriority="high" />
     <div class="hero-overlay"></div>
     <div class="container hero-content">
       <span class="hero-badge">Hello Corp — La voix de votre entreprise</span>
@@ -74,6 +74,38 @@
       </div>
     </div>
   </section>
+
+  <!-- ====================================================
+       BANDEAU DÉFILANT — secteurs, engagements et logo
+       Le logo Hello Corp est repris toutes les trois entrées.
+       La piste est dupliquée par motion.js pour boucler sans
+       raccord ; le défilement se fige au survol.
+  ===================================================== -->
+  <div class="hc-marquee" aria-label="Secteurs accompagnés et engagements Hello Corp">
+    <div class="hc-marquee-track">
+          <span class="hc-marquee-item">Formation</span>
+          <span class="hc-marquee-item">Énergie</span>
+          <span class="hc-marquee-item">Santé</span>
+          <span class="hc-marquee-logo" aria-hidden="true">
+            <img src="assets/icon.svg" alt="" width="34" height="34" loading="lazy" decoding="async" />
+            <span class="hc-marquee-logo-name"><span class="logo-add">Hello</span> Corp</span>
+          </span>
+          <span class="hc-marquee-item">Immobilier</span>
+          <span class="hc-marquee-item">Commerce</span>
+          <span class="hc-marquee-item">Industrie</span>
+          <span class="hc-marquee-logo" aria-hidden="true">
+            <img src="assets/icon.svg" alt="" width="34" height="34" loading="lazy" decoding="async" />
+            <span class="hc-marquee-logo-name"><span class="logo-add">Hello</span> Corp</span>
+          </span>
+          <span class="hc-marquee-item">Opérationnel en 72h</span>
+          <span class="hc-marquee-item">Dès 1 heure par mois</span>
+          <span class="hc-marquee-item">Équipes formées</span>
+          <span class="hc-marquee-logo" aria-hidden="true">
+            <img src="assets/icon.svg" alt="" width="34" height="34" loading="lazy" decoding="async" />
+            <span class="hc-marquee-logo-name"><span class="logo-add">Hello</span> Corp</span>
+          </span>
+    </div>
+  </div>
 
   <!-- ====================================================
        SECTION FONCTIONS SUPPORT — 6 MÉTIERS
@@ -157,7 +189,7 @@
         <!-- Approche -->
         <div class="dual-card">
           <div class="dual-card-img">
-            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80" alt="Notre approche" />
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80" alt="Notre approche" decoding="async" loading="lazy" />
             <div class="dual-card-img-overlay"></div>
           </div>
           <div class="dual-card-body">
@@ -177,7 +209,7 @@
         <!-- Expertises -->
         <div class="dual-card">
           <div class="dual-card-img">
-            <img src="assets/images/secteurs-activite.jpg" alt="Secteurs d'activité accompagnés : formation, énergie, santé, immobilier, commerce et industrie" />
+            <img src="assets/images/secteurs-activite.jpg" alt="Secteurs d'activité accompagnés : formation, énergie, santé, immobilier, commerce et industrie" decoding="async" loading="lazy" />
             <div class="dual-card-img-overlay"></div>
           </div>
           <div class="dual-card-body">
@@ -211,7 +243,7 @@
 
         <article class="news-card">
           <a href="hello-corp-presentation.html" class="news-card-img-wrap">
-            <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=630&h=400&q=80" alt="Présentation Hello Corp" />
+            <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=630&h=400&q=80" alt="Présentation Hello Corp" decoding="async" loading="lazy" />
           </a>
           <div class="news-card-body">
             <span class="news-date">4 août 2026 · Entreprise</span>
@@ -223,7 +255,7 @@
 
         <article class="news-card">
           <a href="telemarketing-prospection-b2b-2026.html" class="news-card-img-wrap">
-            <img src="https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=630&h=400&q=80" alt="Télémarketing B2B" />
+            <img src="https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&w=630&h=400&q=80" alt="Télémarketing B2B" decoding="async" loading="lazy" />
           </a>
           <div class="news-card-body">
             <span class="news-date">21 juillet 2026 · Prospection B2B</span>
@@ -235,7 +267,7 @@
 
         <article class="news-card">
           <a href="delegation-dirigeant-entreprise.html" class="news-card-img-wrap">
-            <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=630&h=400&q=80" alt="Délégation pour dirigeant" />
+            <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=630&h=400&q=80" alt="Délégation pour dirigeant" decoding="async" loading="lazy" />
           </a>
           <div class="news-card-body">
             <span class="news-date">7 juillet 2026 · Organisation</span>
@@ -415,6 +447,7 @@
   <div id="footer-root"></div>
   <script src="shared.js"></script>
   <script src="main.js"></script>
+  <script src="motion.js"></script>
   <script src="https://asset-tidycal.b-cdn.net/js/embed.js" async></script>
 </body>
 </html>
