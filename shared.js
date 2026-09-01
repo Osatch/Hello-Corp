@@ -42,6 +42,7 @@ const _NAV = `
           <a href="fonctions-support.html">Fonctions Support <span class="caret">▾</span></a>
           <ul class="dropdown">
             <li><a href="fonctions-support.html#administration">Administration / Gestion</a></li>
+            <li><a href="fonctions-support.html#communication">Communication &amp; Marketing</a></li>
             <li><a href="fonctions-support.html#utilisateurs">Support Utilisateurs</a></li>
           </ul>
         </li>

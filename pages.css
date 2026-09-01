@@ -536,6 +536,7 @@
   color: var(--gray-700);
   font-size: .9rem;
   font-weight: 600;
+  transition: all .22s ease;
 }
 
 @media (max-width: 980px) {
@@ -711,6 +712,24 @@
   background: var(--surface);
   border-color: var(--line);
   box-shadow: 0 1px 0 rgba(18,35,52,.03);
+}
+
+.about-service-list li:hover {
+  background: var(--blue-bg);
+  border-color: var(--blue);
+  color: var(--blue-dark);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+@media (hover: none) {
+  .about-service-list li:hover {
+    background: var(--surface);
+    border-color: var(--line);
+    color: var(--gray-700);
+    box-shadow: 0 1px 0 rgba(18,35,52,.03);
+    transform: none;
+  }
 }
 
 @media (max-width: 980px) {
